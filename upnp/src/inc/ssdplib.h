@@ -306,6 +306,20 @@ int SearchByTarget(
 	 * be returned to application in the callback. */
 	void *Cookie);
 
+int SearchByTargetExt(
+	/* [in] The handle of the client performing the search. */
+	int Hnd,
+	/* [in] Number of seconds to wait, to collect all the responses. */
+	int Mx,
+	/* [in] Search target. */
+	char* St,
+	/* [in] Extra message in the search request */
+	const char* Extension,
+	/* [in] Cookie provided by control point application. This cokie will
+	 * be returned to application in the callback. */
+	void* Cookie);
+
+
 /* @} SSDP Control Point Functions */
 
 /*!
