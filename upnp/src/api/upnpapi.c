@@ -2052,8 +2052,18 @@ int UpnpSearchAsync(UpnpClient_Handle Hnd,
 	const char *Target_const,
 	const void *Cookie_const)
 {
-	struct Handle_Info *SInfo = NULL;
-	char *Target = (char *)Target_const;
+	return UpnpSearchAsyncExt(Hnd, Mx, Target_const, NULL, Cookie_const);
+}
+	#endif /* INCLUDE_CLIENT_APIS */
+
+int UpnpSearchAsyncExt(UpnpClient_Handle Hnd,
+	int Mx,
+	const char* Target_const,
+	const char* Extension,
+	const void* Cookie_const) 
+{
+	struct Handle_Info* SInfo = NULL;
+	char* Target = (char*)Target_const;
 	int retVal;
 
 	if (UpnpSdkInit != 1) {
@@ -2080,7 +2090,7 @@ int UpnpSearchAsync(UpnpClient_Handle Hnd,
 	}
 
 	HandleUnlock();
-	retVal = SearchByTarget(Hnd, Mx, Target, (void *)Cookie_const);
+	retVal = SearchByTargetExt(Hnd, Mx, Target, Extension, (void*)Cookie_const);
 	if (retVal != 1)
 		return retVal;
 
@@ -2092,7 +2102,7 @@ int UpnpSearchAsync(UpnpClient_Handle Hnd,
 
 	return UPNP_E_SUCCESS;
 }
-	#endif /* INCLUDE_CLIENT_APIS */
+
 #endif
 
 /*******************************************************************************
