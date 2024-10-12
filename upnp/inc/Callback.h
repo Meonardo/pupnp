@@ -112,7 +112,13 @@ enum Upnp_EventType_e
 	 * if auto-renewal of subscriptions is disabled.
 	 * The \b Event parameter is a \b UpnpEventSubscribe
 	 * structure. The subscription is no longer valid. */
-	UPNP_EVENT_SUBSCRIPTION_EXPIRED
+	UPNP_EVENT_SUBSCRIPTION_EXPIRED,
+
+	/*! Received by a device when a control multicast the SSDP search
+	 * request(must be a `SSDP_DEVICETYPE` type). The \b Event parameter contains
+	 * a pointer to a \b membuffer structure containing the information
+	 * about the search request.  */
+	UPNP_CONTROL_SEARCH_REQUEST,
 };
 
 typedef enum Upnp_EventType_e Upnp_EventType;

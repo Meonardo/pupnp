@@ -2054,7 +2054,6 @@ int UpnpSearchAsync(UpnpClient_Handle Hnd,
 {
 	return UpnpSearchAsyncExt(Hnd, Mx, Target_const, NULL, Cookie_const);
 }
-	#endif /* INCLUDE_CLIENT_APIS */
 
 int UpnpSearchAsyncExt(UpnpClient_Handle Hnd,
 	int Mx,
@@ -2102,7 +2101,7 @@ int UpnpSearchAsyncExt(UpnpClient_Handle Hnd,
 
 	return UPNP_E_SUCCESS;
 }
-
+	#endif /* INCLUDE_CLIENT_APIS */
 #endif
 
 /*******************************************************************************

@@ -173,6 +173,19 @@ void ssdp_handle_device_request(
 		threadArg->event = event;
 		threadArg->MaxAge = maxAge;
 
+		// callback to application with search request 
+		if (event.RequestType == SSDP_DEVICETYPE) {
+			UpnpPrintf(UPNP_INFO,
+				API,
+				__FILE__,
+				__LINE__,
+				"Callback to Cookie: %p\n",
+				dev_info->Cookie);
+			dev_info->Callback(UPNP_CONTROL_SEARCH_REQUEST,
+				&hmsg->msg,
+				dev_info->Cookie);
+		}
+
 		TPJobInit(&job, advertiseAndReplyThread, threadArg);
 		TPJobSetFreeFunction(&job, (free_routine)free);
 
