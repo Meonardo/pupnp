@@ -749,6 +749,95 @@ static void CreateServicePacket(
 	return;
 }
 
+/*!
+ * \brief Creates a HTTP request packet(Advertisement).
+ */
+static void CreateAdvertisementPacket(
+	/*! [in] ssdp type. */
+	const char *nt,
+	/*! [in] unique service name ( go in the HTTP Header). */
+	char *usn,
+	/*! [in] Extension msg ( go in the HTTP Header). */
+	char *extension,
+	/*! [in] Location URL. */
+	char *location,
+	/*! [in] Service duration in sec. */
+	int duration,
+	/*! [out] Output buffer filled with HTTP statement. */
+	char **packet,
+	/*! [in] Address family of the HTTP request. */
+	int AddressFamily)
+{
+	int ret_code;
+	const char *nts = "ssdp:alive";
+	membuffer buf;
+
+	membuffer_init(&buf);
+	buf.size_inc = (size_t)30;
+	*packet = NULL;
+
+	const char *host = NULL;
+	/* NOTE: The CACHE-CONTROL and LOCATION headers are not present
+	 * in
+	 * a shutdown msg, but are present here for MS WinMe interop. */
+	switch (AddressFamily) {
+	case AF_INET:
+		host = SSDP_IP;
+		break;
+	default:
+		if (isUrlV6UlaGua(location))
+			host = "[" SSDP_IPV6_SITELOCAL "]";
+		else
+			host = "[" SSDP_IPV6_LINKLOCAL "]";
+	}
+
+	ret_code = http_MakeMessage(&buf,
+		1,
+		1,
+		"Q"
+		"sssdc"
+		"sdc"
+		"ssc"
+		"ssc"
+		"ssc"
+		"ssc"
+		"ssc"
+		"S"
+		"Xc"
+		"sscc",
+		HTTPMETHOD_NOTIFY,
+		"*",
+		(size_t)1,
+		"HOST: ",
+		host,
+		":",
+		SSDP_PORT,
+		"CACHE-CONTROL: max-age=",
+		duration,
+		"LOCATION: ",
+		location,
+		"OPT: ",
+		"\"http://schemas.upnp.org/upnp/1/0/\"; ns=01",
+		"01-NLS: ",
+		gUpnpSdkNLSuuid,
+		"NT: ",
+		nt,
+		"NTS: ",
+		nts,
+		X_USER_AGENT,
+		"USN: ",
+		usn,
+		"EXT: ",
+		extension
+		);
+
+	/* return msg */
+	*packet = membuffer_detach(&buf);
+	membuffer_destroy(&buf);
+
+	return;
+}
+
 int DeviceAdvertisement(char *DevType,
 	int RootDev,
 	char *Udn,
@@ -809,69 +898,38 @@ int DeviceAdvertisement(char *DevType,
 			Mil_Usn, sizeof(Mil_Usn), "%s::upnp:rootdevice", Udn);
 		if (rc < 0 || (unsigned int)rc >= sizeof(Mil_Usn))
 			goto error_handler;
-		CreateServicePacket(MSGTYPE_ADVERTISEMENT,
-			"upnp:rootdevice",
+		CreateAdvertisementPacket("upnp:rootdevice",
 			Mil_Usn,
+			Ext,
 			Location,
 			Duration,
 			&msgs[0],
-			AddressFamily,
-			PowerState,
-			SleepPeriod,
-			RegistrationState);
+			AddressFamily);
 	}
 	/* both root and sub-devices need to send these two messages */
-	CreateServicePacket(MSGTYPE_ADVERTISEMENT,
-		Udn,
-		Udn,
+	CreateAdvertisementPacket(DevType,
+		Mil_Usn,
+		Ext,
 		Location,
 		Duration,
 		&msgs[1],
-		AddressFamily,
-		PowerState,
-		SleepPeriod,
-		RegistrationState);
+		AddressFamily);	
+
 	rc = snprintf(Mil_Usn, sizeof(Mil_Usn), "%s::%s", Udn, DevType);
 	if (rc < 0 || (unsigned int)rc >= sizeof(Mil_Usn))
 		goto error_handler;
-	CreateServicePacket(MSGTYPE_ADVERTISEMENT,
-		DevType,
+
+	CreateAdvertisementPacket(DevType,
 		Mil_Usn,
+		Ext,
 		Location,
 		Duration,
 		&msgs[2],
-		AddressFamily,
-		PowerState,
-		SleepPeriod,
-		RegistrationState);
+		AddressFamily);	
 	/* check error */
 	if ((RootDev && msgs[0] == NULL) || msgs[1] == NULL ||
 		msgs[2] == NULL) {
 		goto error_handler;
-	}
-
-	/* append extension */
-	if (Ext != NULL && strlen(Ext) > 0) {
-		UpnpPrintf(UPNP_INFO,
-			SSDP,
-			__FILE__,
-			__LINE__,
-			"Append device extension to the SSDP: [%s].\n",
-			Ext);
-
-		char ext[EXT_SIZE];
-		memset(ext, 0, sizeof(ext));
-		snprintf(ext, sizeof(ext), "EXT: %s\r\n\r\n", Ext);
-
-		for (int j = 0; j < 3; j++) {
-			if (msgs[j] == NULL) {
-				continue;
-			}
-		   // remove tail "\r\n"
-		   msgs[j][strlen(msgs[j]) - 2] = '\0';
-		   // append extension
-		   strcat(msgs[j], ext);
-		}
 	}
 	
 	/* send packets */

@@ -67,7 +67,7 @@
 
 #define LINE_SIZE (size_t)180
 #define NAME_SIZE (size_t)256
-#define EXT_SIZE (size_t)1024
+#define EXT_SIZE (size_t)256
 #define MNFT_NAME_SIZE 64
 #define MODL_NAME_SIZE 32
 #define SERL_NUMR_SIZE 64
