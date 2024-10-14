@@ -826,10 +826,18 @@ static void CreateAdvertisementPacket(
 		nts,
 		X_USER_AGENT,
 		"USN: ",
-		usn,
-		"EXT: ",
-		extension
+		usn
 		);
+
+	// append extesnion to the buffer
+	if (extension != NULL) {
+		// remove tail "\r\n"
+		membuffer_delete(&buf, buf.length - 2, 2);
+		char ext[EXT_SIZE];
+		size_t len = strlen(extension) + 10;
+		snprintf(ext, len, "EXT: %s\r\n\r\n", extension);
+		membuffer_append(&buf, ext, strlen(ext));
+	}
 
 	/* return msg */
 	*packet = membuffer_detach(&buf);
