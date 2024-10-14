@@ -765,6 +765,8 @@ int DeviceAdvertisement(char *DevType,
 	struct sockaddr_in6 *DestAddr6 = (struct sockaddr_in6 *)&__ss;
 	/* char Mil_Nt[LINE_SIZE] */
 	char Mil_Usn[LINE_SIZE];
+	memset(Mil_Usn, 0, sizeof(Mil_Usn));
+	
 	char *msgs[3];
 	int ret_code = UPNP_E_OUTOF_MEMORY;
 	int rc = 0;
@@ -849,7 +851,7 @@ int DeviceAdvertisement(char *DevType,
 	}
 
 	/* append extension */
-	if (strlen(Ext) > 0) {
+	if (Ext != NULL && strlen(Ext) > 0) {
 		UpnpPrintf(UPNP_INFO,
 			SSDP,
 			__FILE__,
@@ -862,6 +864,9 @@ int DeviceAdvertisement(char *DevType,
 		snprintf(ext, sizeof(ext), "EXT: %s\r\n\r\n", Ext);
 
 		for (int j = 0; j < 3; j++) {
+			if (msgs[j] == NULL) {
+				continue;
+			}
 		   // remove tail "\r\n"
 		   msgs[j][strlen(msgs[j]) - 2] = '\0';
 		   // append extension

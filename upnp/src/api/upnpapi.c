@@ -1565,6 +1565,7 @@ int UpnpUpdateDeviceExtension(UpnpDevice_Handle Hnd, const char *DeviceExtension
 		return UPNP_E_INVALID_PARAM;
 	}
 
+	memset(HInfo->Extension, 0, EXT_SIZE);
 	strcpy(HInfo->Extension, DeviceExtension);
 
 	HandleUnlock();
