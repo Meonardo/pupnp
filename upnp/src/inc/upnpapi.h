@@ -110,6 +110,8 @@ struct Handle_Info
 	int MaxSubscriptionTimeOut;
 	/*! Address family: AF_INET or AF_INET6. */
 	int DeviceAf;
+	/*! Extension message for advertisement. */
+	char Extension[EXT_SIZE];
 #endif
 
 	/* Client only */

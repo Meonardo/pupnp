@@ -370,6 +370,8 @@ int DeviceAdvertisement(
 	int RootDev,
 	/* [in] UDN. */
 	char *Udn,
+	/* [in] Extension. */
+	char *Ext,
 	/* [in] Location URL. */
 	char *Location,
 	/* [in] Service duration in sec. */

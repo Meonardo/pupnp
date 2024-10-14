@@ -1542,6 +1542,36 @@ int UpnpUnRegisterRootDeviceLowPower(UpnpDevice_Handle Hnd,
 
 	return retVal;
 }
+
+int UpnpUpdateDeviceExtension(UpnpDevice_Handle Hnd, const char *DeviceExtension) 
+{
+	int retVal = 0;
+	struct Handle_Info *HInfo = NULL;
+
+	HandleLock();
+	switch (GetHandleInfo(Hnd, &HInfo)) {
+	case HND_INVALID:
+		HandleUnlock();
+		return UPNP_E_INVALID_HANDLE;
+	default:
+		break;
+	}
+
+	const char* tmp = "EXT: \r\n\r\n";
+	// Check if the extension is too long
+	int size = EXT_SIZE - sizeof(tmp);
+	if (strlen(DeviceExtension) > size) {
+		HandleUnlock();
+		return UPNP_E_INVALID_PARAM;
+	}
+
+	strcpy(HInfo->Extension, DeviceExtension);
+
+	HandleUnlock();
+
+	return retVal;
+}	
+
 #endif /* INCLUDE_DEVICE_APIS */
 
 #ifdef INCLUDE_CLIENT_APIS

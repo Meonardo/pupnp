@@ -752,6 +752,7 @@ static void CreateServicePacket(
 int DeviceAdvertisement(char *DevType,
 	int RootDev,
 	char *Udn,
+	char *Ext,
 	char *Location,
 	int Duration,
 	int AddressFamily,
@@ -846,6 +847,28 @@ int DeviceAdvertisement(char *DevType,
 		msgs[2] == NULL) {
 		goto error_handler;
 	}
+
+	/* append extension */
+	if (strlen(Ext) > 0) {
+		UpnpPrintf(UPNP_INFO,
+			SSDP,
+			__FILE__,
+			__LINE__,
+			"Append device extension to the SSDP: [%s].\n",
+			Ext);
+
+		char ext[EXT_SIZE];
+		memset(ext, 0, sizeof(ext));
+		snprintf(ext, sizeof(ext), "EXT: %s\r\n\r\n", Ext);
+
+		for (int j = 0; j < 3; j++) {
+		   // remove tail "\r\n"
+		   msgs[j][strlen(msgs[j]) - 2] = '\0';
+		   // append extension
+		   strcat(msgs[j], ext);
+		}
+	}
+	
 	/* send packets */
 	if (RootDev) {
 		/* send 3 msg types */

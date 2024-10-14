@@ -67,6 +67,7 @@
 
 #define LINE_SIZE (size_t)180
 #define NAME_SIZE (size_t)256
+#define EXT_SIZE (size_t)1024
 #define MNFT_NAME_SIZE 64
 #define MODL_NAME_SIZE 32
 #define SERL_NUMR_SIZE 64
@@ -966,6 +967,25 @@ UPNP_EXPORT_SPEC int UpnpUnRegisterRootDeviceLowPower(
 	int SleepPeriod,
 	/*! RegistrationState as defined by UPnP Low Power. */
 	int RegistrationState);
+
+/*! \brief Updates the device extension for a registered device.
+ *
+ * This function allows a device to update the device extension for a registered
+ * device. The device extension is a string that is included in the device
+ * description document which includes: the network ip address, subnet mast,
+ * gateway ip address, DNS ip address, and the MAC address of the device.
+ *
+ * This function is synchronous and generates no callbacks.
+ *
+ * \return An integer representing one of the following:
+ *     \li \c UPNP_E_SUCCESS: The operation completed successfully.
+ *     \li \c UPNP_E_INVALID_HANDLE: The handle is not a valid device handle.
+ *     \li \c UPNP_E_INVALID_PARAM: The DeviceExtension is \c NULL.
+ */
+UPNP_EXPORT_SPEC int UpnpUpdateDeviceExtension(
+	UpnpDevice_Handle Hnw,
+	const char* DeviceExtension
+);
 
 /*!
  * \brief Registers a control point application with the UPnP Library.
