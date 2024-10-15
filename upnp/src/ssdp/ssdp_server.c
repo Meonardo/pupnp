@@ -446,6 +446,7 @@ int AdvertiseAndReply(int AdFlag,
 					if (AdFlag == 1) {
 						ServiceAdvertisement(UDNstr,
 							servType,
+							SInfo->Extension,
 							SInfo->DescURL,
 							Exp,
 							SInfo->DeviceAf,

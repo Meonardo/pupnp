@@ -1145,6 +1145,7 @@ error_handler:
 
 int ServiceAdvertisement(char *Udn,
 	char *ServType,
+	char *Ext, 
 	char *Location,
 	int Duration,
 	int AddressFamily,
@@ -1153,6 +1154,8 @@ int ServiceAdvertisement(char *Udn,
 	int RegistrationState)
 {
 	char Mil_Usn[LINE_SIZE];
+	memset(Mil_Usn, 0, sizeof(Mil_Usn));
+
 	char *szReq[1];
 	int RetVal = UPNP_E_OUTOF_MEMORY;
 	struct sockaddr_storage __ss;
@@ -1189,16 +1192,14 @@ int ServiceAdvertisement(char *Udn,
 		goto error_handler;
 	/* CreateServiceRequestPacket(1,szReq[0],Mil_Nt,Mil_Usn,
 	 * Server,Location,Duration); */
-	CreateServicePacket(MSGTYPE_ADVERTISEMENT,
-		ServType,
+	CreateAdvertisementPacket(ServType,
 		Mil_Usn,
+		Ext,
 		Location,
 		Duration,
 		&szReq[0],
-		AddressFamily,
-		PowerState,
-		SleepPeriod,
-		RegistrationState);
+		AddressFamily);
+
 	if (szReq[0] == NULL) {
 		goto error_handler;
 	}

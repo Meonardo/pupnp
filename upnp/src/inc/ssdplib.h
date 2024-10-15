@@ -450,6 +450,8 @@ int ServiceAdvertisement(
 	char *Udn,
 	/* [in] Service Type. */
 	char *ServType,
+	/* [in] Extension. */
+	char *Ext,
 	/* [in] Location of Device description document. */
 	char *Location,
 	/* [in] Life time of this device. */
