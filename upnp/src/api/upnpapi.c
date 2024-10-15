@@ -3771,13 +3771,7 @@ int UpnpGetIfInfo(const char *IfName)
 			 * not all) adapters. A full fix would require a lot of
 			 * big changes (gIF_NAME to wchar string?).
 			 */
-			size_t *s = NULL;
-			wcstombs_s(s,
-				gIF_NAME,
-				sizeof(gIF_NAME),
-				adapts_item->FriendlyName,
-				sizeof(gIF_NAME));
-			free(s);
+			strncpy(gIF_NAME, adapts_item->AdapterName, sizeof(gIF_NAME) - 1);
 
 			ifname_found = 1;
 		} else {
@@ -3789,14 +3783,7 @@ int UpnpGetIfInfo(const char *IfName)
 			 * big changes (gIF_NAME to wchar string?).
 			 */
 			char tmpIfName[LINE_SIZE] = {0};
-			size_t *s = NULL;
-
-			wcstombs_s(s,
-				tmpIfName,
-				sizeof(tmpIfName),
-				adapts_item->FriendlyName,
-				sizeof(tmpIfName));
-			free(s);
+			strncpy(tmpIfName, adapts_item->AdapterName, LINE_SIZE);
 
 			if (strncmp(gIF_NAME, tmpIfName, sizeof(gIF_NAME)) !=
 				0) {
